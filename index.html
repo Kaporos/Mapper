@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mapper</title>
+    <meta charset="UTF-8">
+
+  <link rel="stylesheet" href="jquery-jvectormap.css" type="text/css" media="screen"/>
+  <script src="jquery.js"></script>
+  <script src="jquery-jvectormap.js"></script>
+  <script src="jquery-jvectormap-world-merc.js"></script>
+  <script src="https://jvectormap.com/js/jquery-jvectormap-europe-merc.js"></script>
+  <script src="https://chancejs.com/chance.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div style="display:flex">
+  <div id="world-map" style="height: 100vh;width:80vw"></div>
+  <div><h1 id="text"></h1><h1 id="lives"></h1></div>
+  
+  </div>
+  
+  
+  
+  
+  
+	<script id="variables">
+		
+		//CONFIG
+		start_with = 10
+		repetitions = 3
+		allowed_tries = 3
+		
+		
+		//GAME VARIABLES
+		current_code = ""
+		last_code = ""
+		tries = 0
+		counter = {}
+		failed = false
+		last_clicked = ""
+		total_regions = ["BE","FR","PT","RU"]
+		current_regions = []
+	</script>
+	<script id="gameMechanics">
+		
+	  function play(map){
+		  
+		  
+		  total_regions = getAllCountries(map);
+		  
+		  current_regions = chance.pickset(total_regions,start_with)
+		  current_regions.forEach(function(code){
+			total_regions = removeFromArray(total_regions,code)  
+		   })
+		  random_ask();
+	  }
+	
+	  function winGame(){
+		 alert("You just win !")
+		 document.location.reload()
+	  }
+	  
+	  
+	  function failCountry(map,code){
+		tries += 1
+		colorize(map,code,"red")
+
+		
+		
+		if (allowed_tries == tries){
+				failed = true
+				colorize(map,current_code,"blue")
+				map.setFocus({region:current_code,animate:true})
+				tries = 0
+		}
+		
+		
+	  }
+	  
+	  
+	  function winCountry(map,code){
+		colorize(map,code,"lightgreen")
+		clearCountry()
+		if (failed == false){
+			if (Object.keys(counter).includes(code)){
+				
+					counter[code] += 1
+			}else{
+				counter[code] = 1
+			}
+			if (counter[code] == repetitions){
+				current_regions = removeFromArray(current_regions,code)
+				if (total_regions.length > 0){
+					new_code = (chance.pickone(total_regions))
+					current_regions.push(new_code)
+					total_regions = removeFromArray(total_regions,new_code)
+				}
+				
+			}
+		}
+		failed = false
+		tries = 0
+		map.setFocus({
+              x: 0.0,
+              y: 0.0,
+              scale: 1,
+              animate: false
+            })
+		setTimeout(() => {  resetMap(map); 
+
+		if (current_regions.length == 0){
+			winGame()
+		}else{
+			random_ask()
+		}	
+		
+		}, 750);
+		
+	  }
+	  	  
+	function random_ask(){
+		//regions = Object.keys(map.series.regions[0].elements)
+		while (true){
+			current_code = chance.pickone(current_regions)
+			if (current_code != last_code){
+				break;
+			}
+		}
+		ask(current_code)
+		
+		}
+  
+	async function ask(code){
+		
+		code_place = document.getElementById("text")
+		data = await makeGetRequest("https://restcountries.eu/rest/v2/alpha/"+code)
+		name = data["name"]	
+		if (data["translations"]["fr"] != undefined){name=data["translations"]["fr"]}
+		console.log(name)
+		code_place.innerHTML = name
+		console.log("Done")
+		last_code = code
+		
+	}
+	
+	function verify(code){
+		if (code === current_code){
+			return true
+		}
+		return false
+	}
+  
+  
+  </script>
+	<script id="UI">
+		function clearCountry(){
+			document.getElementById("text").innerHTML = ""
+
+		}
+	
+	</script>
+    <script id="mapManaging">
+	  
+	  function removeFromArray(arr, value) { return arr.filter(function(ele){ return ele != value; });}
+
+	  function getAllCountries(map){
+	  
+	  return Object.keys(map.series.regions[0].elements)
+	  
+	  }
+	  function getSelectedRegionsMap(map){
+		  result = {}
+		  regionsMap = map.getSelectedRegions()
+		  regionsMap.forEach(function (region) {
+			  console.log(region);
+			  region_color = map.series.regions[0].elements[region].element.config.style.selected.fill;
+			  result[region] = region_color;
+		  }
+		  )
+		  return result
+		  
+	  }
+
+	  function resetMap(map){
+		  map.clearSelectedRegions()		  
+	  }
+	  
+	  
+	  function colorize(map,code,color){
+		  
+		  
+		colors = getSelectedRegionsMap(map)
+		
+		colors[code] = color
+		map.clearSelectedRegions()
+
+		Object.keys(colors).forEach(function (region) {
+					console.log(region)
+					console.log(colors[region])
+					map.series.regions[0].elements[region].element.config.style.selected.fill = colors[region]
+			
+			})
+		map.setSelectedRegions(Object.keys(colors))
+
+		
+		
+
+	  }
+	
+	map = new jvm.Map({
+		map: 'europe_merc',
+		container: $('#world-map'),
+		series: {
+		  regions: [{
+			attribute: 'fill'
+		  }]
+		},
+		zoomMax: 50,
+		onRegionClick: function(e,code){
+			if (last_clicked === code){
+				console.log("Double clicked on "+code)
+				if (verify(code)){
+					winCountry(map,code)
+				}
+				else{
+					failCountry(map,code)
+				}
+				last_clicked = ""
+			}
+			else{
+				last_clicked = code
+				}
+		},
+		onRegionTipShow: function(e, el, code){
+			e.preventDefault();
+		}
+	
+  });
+  
+
+	
+
+  
+  </script>
+
+	<script id="countries">
+		var is_done = false
+		var result = {}
+
+		function makeGetRequest(path) { 
+			return new Promise(function (resolve, reject) { 
+				axios.get(path).then( 
+					(response) => { 
+						var result = response.data; 
+						console.log('Processing Request'); 
+						resolve(result); 
+					}, 
+						(error) => { 
+						reject(error); 
+					} 
+				); 
+			}); 
+		} 
+
+
+		async function getCountryInfo(code){
+
+			result = await makeGetRequest("https://restcountries.eu/rest/v2/alpha/"+code)
+			console.log(result)
+			return result
+		}
+		
+		async function getCountryName(code){
+			country_infos = await getCountryInfo(code)
+			return country_infos[name]
+		}
+
+		
+	</script>
+
+
+	<script>
+	
+		play(map);
+	
+	</script>
+
+</body>
+
+</html>
