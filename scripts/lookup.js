@@ -1,3 +1,7 @@
+
+
+
+
   function play(map){
 		  
 		  

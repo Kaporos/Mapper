@@ -45,35 +45,6 @@
 
 	  }
 	
-	map = new jvm.Map({
-		map: 'world_merc',
-		container: $('#world-map'),
-		series: {
-		  regions: [{
-			attribute: 'fill'
-		  }]
-		},
-		backgroundColor: "#74b9ff",
-		onRegionClick: function(e,code){
-			if (last_clicked === code){
-				console.log("Double clicked on "+code)
-				if (verify(code)){
-					winCountry(map,code)
-				}
-				else{
-					failCountry(map,code)
-				}
-				last_clicked = ""
-			}
-			else{
-				last_clicked = code
-				}
-		},
-		onRegionTipShow: function(e, el, code){
-			e.preventDefault();
-		}
-	
-  });
   
 
 	

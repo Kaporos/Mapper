@@ -1,54 +1,43 @@
-<!DOCTYPE html>
 <html>
 <head>
-  <title>Mapper</title>
-    <meta charset="UTF-8">
-
-  <link rel="stylesheet" href="styles/jquery-jvectormap.css" type="text/css" media="screen"/>
-  <script src="scripts/others/jquery.js"></script>
-  <script src="scripts/others/jquery-jvectormap.js"></script>
-  <script src="maps/world-merc.js"></script>
-  <script src="maps/europe-merc.js"></script>
-  <script src="https://chancejs.com/chance.min.js"></script>
-  <script src="scripts/others/i18n.js"></script>
-
-
-  <script src="languages/fr.js"></script>
+ <meta charset="UTF-8">
+ <link rel = "stylesheet"
+   type = "text/css"
+   href = "styles/index.css" />
+ </head>
 
 </head>
-<body style="background-color: #74b9ff;color:white">
-  <div style="display:flex;">
-  <div>
-    <div id="world-map" style="height: 90vh;width:80vw;"></div>
-  </div>
-  <div>
-  	<h1 id="text" style="text-align:center"></h1>
-</div>
-	<script id="variables">
-		
-		//CONFIG
-		start_with = 10
-		repetitions = 3
-		allowed_tries = 3
-		
-		
-		//GAME VARIABLES
-		current_code = ""
-		last_code = ""
-		tries = 0
-		counter = {}
-		failed = false
-		last_clicked = ""
-		total_regions = ["BE","FR","PT","RU"]
-		current_regions = []
-	</script>
-	<script src="scripts/mechanics.js"></script>
-	<script src="scripts/ui.js"></script>
-    <script src="scripts/map_manager.js"></script>
+<body>
+	
+	<div id="brand">Mapper</div>
+	<div id="bottom">
+	<div id="menu" ><h1>Je veux jouer à</h1>	
+		<select name="map" id="game-select">
+			<option value="lookup">Cherche et trouve</option>
+		</select>
+		<h1> sur la carte</h1>
+		<select name="map" id="map-select">
+			<option value="world_merc">Monde</option>
+			<option value="europe_merc">Europe</option>
+		</select>
+	</div>
+	<br>
+	<button id="play_btn" onclick="loadGame()">PLAY</button>
+	</div>
+
 	<script>
-		i18n.translator.add(fr_translations_json)
-		play(map);
+		
+	function loadGame(){
+		
+		map = document.getElementById("map-select").value
+		game = document.getElementById("game-select").value
+		window.location.href = "/games/"+game+".html?map="+map;
+
+		
+	}
+	
 	
 	</script>
+
 </body>
 </html>

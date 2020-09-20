@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Chicle&display=swap');
+
+body{
+	background-color: #6c5ce7;
+	color: white;
+	text-align: center;
+}
+
+#brand{
+	font-family: 'Chicle', cursive;
+	font-size: 4vmax
+}
+
+#menu{
+display: flex;
+justify-content: center;
+align-items: center;
+
+}
+
+#menu h1{
+	padding-right: 1vw;
+	padding-left: 1vw;
+}
+
+#bottom{
+position: absolute;
+top: 35%;
+width: 100%;
+text-align: center;
+
+}
+
+
+
+#play_btn {
+	background-color: #a29bfe;
+	border: 0;
+	height: 5vmax;
+	width: 10vmax;
+	border-radius: 25px;
+	color: white;
+}
+
+
+#play_btn:hover{
+	border: 1px solid white;
+}
+
+select {
+	border: 0;
+	background-color: white;
+	height: 3vmax;
+	outline: 0px;	
+	border-radius: 15px;
+	padding-right:40px; // as your requirement give to padding-right 
+
+}
+
+

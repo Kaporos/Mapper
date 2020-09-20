@@ -1,5 +1,6 @@
 var fr_translations_json = {
   "values":{
+    "Faeroe Is.": "Îles Féroé",
     "Bangladesh": "Bangladesh",
     "Belgium": "Belgique",
     "Burkina Faso": "Burkina Faso",
