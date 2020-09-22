@@ -31,8 +31,11 @@
     <div id="world-map" style="height: 90vh;width:80vw;"></div>
   </div>
   <div>
-  	<h1 id="text" style="text-align:center"></h1>
+  	<h1 id="text" style="text-align: center;"></h1>
+  	<br>
+  	<h1 id="failed" style="">  </h1>
   	<button onclick="document.location.href = '/'" id="home_button">Retourner a l'accueil</button>
+
 </div>
 	<script id="variables">
 		
@@ -52,16 +55,20 @@
 		
 		
 		//GAME VARIABLES
-		current_code = ""
-		last_code = ""
-		tries = 0
-		counter = {}
-		failed = false
-		last_clicked = ""
-		total_regions = ["BE","FR","PT","RU"]
-		current_regions = []
+		current_marker = ""
+		last_marker = ""
+		
+		markers_glist = []
+		markers_names = []
+		
+		
+		var maps = {}
+		
 	</script>
-	<script src="../scripts/lookup.js"></script>
+	
+	<script src="../maps/markers/mostpopulatedcities.js"></script>
+	 
+	<script src="../scripts/markers.js"></script>
 	<script src="../scripts/ui.js"></script>
     <script src="../scripts/map_manager.js"></script>
 	<script>
@@ -70,17 +77,18 @@
 		
 		
 		
-		var choosed_map = urlParams.get("map")
-		if (choosed_map == undefined){
-			choosed_map = "world_merc"
+		var choosed_markers = urlParams.get("markers")
+		if (choosed_markers == undefined){
+			choosed_markers = "most_populated"
 		}
+
 
 		
 		
 		
 		
 		map = new jvm.Map({
-			map: choosed_map,
+			map: maps[choosed_markers]["map"],
 			container: $('#world-map'),
 			series: {
 			  regions: [{
@@ -88,29 +96,32 @@
 			  }]
 			},
 			backgroundColor: "#74b9ff",
-			onRegionClick: function(e,code){
-				if (last_clicked === code){
-					console.log("Double clicked on "+code)
-					if (verify(code)){
-						winCountry(map,code)
+			onMarkerClick: function (el,marker){
+				name = (markers_names[marker])
+				if (name == current_marker){
+					console.log("Success")
+					document.getElementById("failed").innerHTML = ""
+					map.series.regions[0].map.markers[marker].element.config.style.selected.fill = "lightgreen"
+					map.setSelectedMarkers(marker)
+					if (ask()){
+					}else{
+						alert("You win")
+						
+						document.location.reload()
 					}
-					else{
-						failCountry(map,code)
-					}
-					last_clicked = ""
+				}else{
+					console.log("Failed")
+					document.getElementById("failed").innerHTML = "Non, ça c'était "+name
 				}
-				else{
-					last_clicked = code
-					}
 			},
-			onRegionTipShow: function(e, el, code){
+			onMarkerTipShow: function(e, el, code){
 				e.preventDefault();
 			}
 		
 	  });
 		
 		i18n.translator.add(fr_translations_json)
-		play(map);
+		play(map,maps[choosed_markers]["markers"]);
 		
 		
 		

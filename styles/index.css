@@ -4,6 +4,32 @@ body{
 	background-color: #6c5ce7;
 	color: white;
 	text-align: center;
+	overflow: hidden;
+}
+
+
+#text{
+	position: absolute;
+	right: 75px;
+	text-align: center;
+
+}
+
+#home_button {
+	width: 200px;
+	height:50px;
+	border:none;
+	color:white;
+	background-color:#0984e3;
+	border-radius:15px;
+	font-weight:900;
+	bottom:150px;
+	position: absolute;
+	right: 25px;
+}
+
+#home_button:hover{
+	border: 2px solid white;
 }
 
 #brand{

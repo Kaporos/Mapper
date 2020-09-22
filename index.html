@@ -12,8 +12,9 @@
 	<div id="brand">Mapper</div>
 	<div id="bottom">
 	<div id="menu" ><h1>Je veux jouer à</h1>	
-		<select name="map" id="game-select">
-			<option value="lookup">Cherche et trouve</option>
+		<select name="map" id="game-select" onchange="change()">
+			<option value="lookup">Localise moi ( Pays)</option>
+			<option value="markers">Localise moi ( Points )</option>
 		</select>
 		<h1> sur la carte</h1>
 		<select name="map" id="map-select">
@@ -28,6 +29,9 @@
 			<option value="africa_merc">Africa</option>
 			<option value="oceania_merc">Océanie</option>
 		</select>
+		<select name="markers" id="markers-select" style="display:none";>
+			<option value="most_populated">Pays les plus peuplés</option>
+		</select>
 	</div>
 	<br>
 	<button id="play_btn" onclick="loadGame()">PLAY</button>
@@ -38,12 +42,32 @@
 	function loadGame(){
 		
 		map = document.getElementById("map-select").value
+		markers = document.getElementById("markers-select").value
 		game = document.getElementById("game-select").value
-		window.location.href = "/games/"+game+".html?map="+map;
+		params = ""
+		if (game == "markers"){
+			params = "markers="+markers;
+		}else{
+			params = "map="+map
+		}
+		window.location.href = "/games/"+game+".html?"+params;
+
 
 		
 	}
 	
+	function change(){
+		document.getElementById("markers-select").style.display = "none"
+		document.getElementById("map-select").style.display = "none"
+		
+		if (document.getElementById("game-select").value === "markers"){
+			document.getElementById("markers-select").style.display = "block"
+		}else{
+			document.getElementById("map-select").style.display = "block"
+		}
+
+		
+	}
 	
 	</script>
 
