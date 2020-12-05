@@ -63,21 +63,29 @@
 		total_regions = ["BE","FR","PT","RU"]
 		current_regions = []
 	</script>
+	<script src="../maps/custom.js"></script>
+
 	<script src="../scripts/lookup.js"></script>
 	<script src="../scripts/ui.js"></script>
-    <script src="../scripts/map_manager.js"></script>
+	<script src="../scripts/map_manager.js"></script>
 	<script>
 		
 		
 		
-		
+		custom = "" 
 		
 		var choosed_map = urlParams.get("map")
 		if (choosed_map == undefined){
 			choosed_map = "world_merc"
 		}
 
-		
+
+		if (Object.keys(CUSTOM_MAPS).includes(choosed_map)) {
+
+			custom = choosed_map 
+			choosed_map = CUSTOM_MAPS[choosed_map].from
+
+		}
 		
 		
 		
@@ -112,7 +120,7 @@
 	  });
 		
 		i18n.translator.add(fr_translations_json)
-		play(map);
+		play(map, custom);
 		
 		
 		

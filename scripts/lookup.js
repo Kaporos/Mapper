@@ -2,15 +2,22 @@
 
 
 
-  function play(map){
+  function play(map, custom){
 		  
-		  
-		  total_regions = getAllCountries(map);
-		  
+		  if (custom == "") {
+			  total_regions = getAllCountries(map);
+
+		  }else{
+			 total_regions = CUSTOM_MAPS[custom].wanted_countries
+			 console.log(total_regions.length)
+		  }
+
 		  current_regions = chance.pickset(total_regions,start_with)
 		  current_regions.forEach(function(code){
 			total_regions = removeFromArray(total_regions,code)  
 		   })
+		  
+
 		  random_ask();
 	  }
 	
