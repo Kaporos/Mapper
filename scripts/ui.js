@@ -1,3 +1,3 @@
-		function clearCountry(){
-			document.getElementById("text").innerHTML = ""
-		}
+function clearCountry(){
+	document.getElementById("text").innerHTML = ""
+}

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mapper</title>
+    <meta charset="UTF-8">
+
+  <link rel="stylesheet" href="../styles/jquery-jvectormap.css" type="text/css" media="screen"/>
+  <link rel="stylesheet" href="../styles/index.css" type="text/css" media="screen"/>
+  
+
+  
+  <script src="../scripts/others/jquery.js"></script>
+  <script src="../scripts/others/jquery-jvectormap.js"></script>
+  <script src="https://chancejs.com/chance.min.js"></script>
+  <script src="../scripts/others/i18n.js"></script>
+  <script src="../scripts/others/vue.js"></script>
+
+
+
+  <script src="../maps/countries/world-merc.js"></script>
+  <script src="../maps/countries/europe-merc.js"></script>
+  <script src="../maps/countries/south-america-merc.js"></script>
+  <script src="../maps/countries/continents-merc.js"></script>
+  <script src="../maps/countries/africa-merc.js"></script>
+  <script src="../maps/countries/oceania-merc.js"></script>
+  <script src="../maps/countries/north-america-merc.js"></script>
+  <script src="../maps/countries/asia-merc.js"></script>
+  <script src="../maps/countries/belgium-merc.js"></script>
+  <script src="../maps/countries/russia-merc.js"></script>
+
+  <script src="../maps/capitals/capitals.js"></script>
+
+
+
+  <script src="../languages/fr.js"></script>
+
+</head>
+<body style="background-color: #74b9ff;color:white;">
+
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
+
+
+  body {
+    display: flex;
+align-items: center;
+justify-content: center;min-height: 90vh;
+font-family: 'Montserrat', sans-serif;
+font-size: 1.1rem;
+font-weight: 700;
+
+
+  }
+
+  button{
+  background-color: #4d92ca;
+border: 0.1rem solid hsl(199, 54%, 55%);
+border-radius: .4rem;
+color: #fff;
+cursor: pointer;
+display: inline-block;
+font-size: 1.1rem;
+font-weight: 700;
+height: 3.8rem;
+letter-spacing: .1rem;
+line-height: 3.8rem;
+padding: 0 3.0rem;
+text-align: center;
+text-decoration: none;
+text-transform: uppercase;
+white-space: nowrap;
+  }
+
+  button:hover{
+    background-color: #316ea0;
+  }
+
+
+  input{
+    background-color: transparent;
+    border-style:solid;
+    border: none;
+    border-bottom: 5px solid #d1d1d1;
+
+    box-shadow: none;
+    box-sizing: inherit;
+    padding: .6rem 1.0rem .7rem;
+    width: 100%;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+
+
+}
+
+</style>
+
+
+    <div id="app">
+      <h1> {{ current_country}} </h1>
+      <div v-if="!isTextInput" v-for="choice in choices">
+      <button @click="answer(choice)">{{ choice }}</button>
+      <br>
+      <br>
+    </div>
+    <form @submit.prevent="answer(message)"  v-if="isTextInput" > 
+
+    <div style="display: flex;margin-top: 100px;">
+    <input v-model="message"type="text" placeholder="Capitale">
+    <button type="submit" style="transform: scale(.9);" @submit="answer(message)">Valider</button>
+  </div>
+  <br>
+    <p for="" v-if="retry">Retapez la bonne réponse</p>
+  </form>
+
+
+    </div>
+
+
+    <script src="../maps/custom.js"></script>
+    <script src="../scripts/qcm.js"></script>
+    <script src="../scripts/map_manager.js"></script>
+
+
+
+
+    <script>
+
+
+      const CURRENT_NUMBER = 5
+      const HOW_MANY_TO_TEXT = 3
+      const HOW_MANY_TO_OK = 5
+      const HOW_MANY_ANSWERS = 3
+
+
+
+
+
+    app = Vue.createApp({
+      data(){ return {
+        current_country: "Loading...",
+        last_country: "",
+        choices: ["1","2"],
+        good_answer: "",
+        isTextInput: false,
+        streak: {},
+        retry: false
+      }},
+      methods: {
+      answer(capital) {
+        this.message = ""
+
+        if (capital == this.good_answer){
+          
+          title = "Parfait"
+          text = "La capitale de "+this.current_country+" est bien "+capital
+          icon = "success"
+          if (!this.retry){
+            if(Object.keys(this.streak).includes(this.current_country)){
+              this.streak[this.current_country] ++
+            }else{
+              this.streak[this.current_country] = 1
+            }
+          }
+          this.retry = false
+
+        }else{
+          title = "Raté ! "
+          text = "La capitale de "+this.current_country+" est "+this.good_answer
+          icon = "error"
+          this.retry = true
+          if(Object.keys(this.streak).includes(this.current_country)){
+            if (this.streak[this.current_country] > 0){ 
+              this.streak[this.current_country] --
+            }
+          }else{
+            this.streak[this.current_country] = 0
+          }
+        }
+
+        Swal.fire({
+          title: title,
+          text: text,
+          icon: icon,
+          confirmButtonText: 'Ok',
+
+        }).then((r) => {
+          if (this.retry){
+            return
+          }
+
+          ask()
+        })
+      }
+    }
+    }).mount("#app")
+
+		
+    const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+
+
+    var choosed_map = urlParams.get("map")
+    if (choosed_map == undefined){
+        choosed_map = "world_merc"
+    }
+
+    countries = []
+
+    if (Object.keys(CUSTOM_MAPS).includes(choosed_map)) {
+
+        countries = CUSTOM_MAPS[choosed_map].wanted_countries
+        choosed_map = CUSTOM_MAPS[choosed_map].from 
+
+    }
+
+    map = new jvm.Map({
+        map: choosed_map,
+        series: {
+			  regions: [{
+				attribute: 'fill'
+			  }]
+			},
+     });
+    
+     if (countries.length == 0){
+      countries = getAllCountries(map)
+
+     }
+
+    
+
+
+    i18n.translator.add(fr_translations_json)
+
+    play()
+
+    		
+
+
+
+  </script>
+
+<script src="../scripts/js.cookie.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+</body>
+
+</html>

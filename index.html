@@ -14,10 +14,13 @@
 	<div id="menu" ><h1>Je veux jouer à</h1>	
 		<select name="map" id="game-select" onchange="change()">
 			<option value="lookup">Localise moi ( Pays)</option>
+			<option value="qcm">Quelle est ma capitale</option>
+
 			<option value="markers">Localise moi ( Points )</option>
+
 		</select>
 		<h1> sur la carte</h1>
-		<select name="map" id="map-select">
+		<select name="map" id="lookup-select">
 			<option value="world_merc">Pays du Monde</option>
 			<option value="china_limits">Pays limitrophes chine</option>
 
@@ -34,6 +37,12 @@
 		<select name="markers" id="markers-select" style="display:none";>
 			<option value="most_populated">Pays les plus peuplés</option>
 		</select>
+
+		<select name="capitales" id="qcm-select" style="display: none;">
+			<option value="china_limits">Pays limitrophes chine</option>
+		</select>
+
+
 	</div>
 	<br>
 	<button id="play_btn" onclick="loadGame()">PLAY</button>
@@ -44,15 +53,15 @@
 	<script>
 		
 	function loadGame(){
-		
-		map = document.getElementById("map-select").value
-		markers = document.getElementById("markers-select").value
 		game = document.getElementById("game-select").value
+
+		value = document.getElementById(game+"-select").value
+
 		params = ""
 		if (game == "markers"){
-			params = "markers="+markers;
+			params = "markers="+value;
 		}else{
-			params = "map="+map
+			params = "map="+value
 		}
 		window.location.href = "/games/"+game+".html?"+params;
 
@@ -62,16 +71,25 @@
 	
 	function change(){
 		document.getElementById("markers-select").style.display = "none"
-		document.getElementById("map-select").style.display = "none"
-		
-		if (document.getElementById("game-select").value === "markers"){
+		document.getElementById("lookup-select").style.display = "none"
+		document.getElementById("qcm-select").style.display = "none"
+
+		game = document.getElementById("game-select").value
+		if ( game === "markers"){
 			document.getElementById("markers-select").style.display = "block"
-		}else{
-			document.getElementById("map-select").style.display = "block"
+		}else if (game === "lookup"){
+			document.getElementById("lookup-select").style.display = "block"
+		}else {
+			document.getElementById("qcm-select").style.display = "block"
+
 		}
 
 		
 	}
+
+
+	window.addEventListener("DOMContentLoaded", (event) => {
+change() 	 });
 	
 	</script>
 
