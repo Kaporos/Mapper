@@ -33,30 +33,14 @@ function ask(){
     others = chance.shuffle(others)
 
     app.choices = others
-
+    
     if (Object.keys(app.streak).includes(translated_name)){
         if(app.streak[translated_name] >= HOW_MANY_TO_TEXT){
             if(app.streak[translated_name] < HOW_MANY_TO_OK){
                 app.isTextInput = true
                 console.log("TEXT ")
-            }else{
-                console.log("KNOWED COUNTRY")
-                country_list = removeFromArray(country_list, app.last_country)
-                countries = removeFromArray(countries, app.last_country)
-                if (countries.length == 0){
-                    Swal.fire({
-                        title: "Bravo",
-                        text: "Vous avez fini cet entrainement",
-                        icon: icon,
-                        confirmButtonText: 'Recommencer',
-              
-                      }).then((r) => {
-                        document.location.reload()
-                      })
-                }
-                country_list.push(chance.pickone(countries))
-                ask()
             }
+            
         }
     }else{
         console.log("Pass streak")

@@ -143,73 +143,12 @@ input{
 
       const CURRENT_NUMBER = 5
       const HOW_MANY_TO_TEXT = 3
-      const HOW_MANY_TO_OK = 5
+      const HOW_MANY_TO_OK = 1
       const HOW_MANY_ANSWERS = 3
 
 
 
-
-
-    app = Vue.createApp({
-      data(){ return {
-        current_country: "Loading...",
-        last_country: "",
-        choices: ["1","2"],
-        good_answer: "",
-        isTextInput: false,
-        streak: {},
-        retry: false
-      }},
-      methods: {
-      answer(capital) {
-        this.message = ""
-
-        if (capital == this.good_answer){
-          
-          title = "Parfait"
-          text = "La capitale de "+this.current_country+" est bien "+capital
-          icon = "success"
-          if (!this.retry){
-            if(Object.keys(this.streak).includes(this.current_country)){
-              this.streak[this.current_country] ++
-            }else{
-              this.streak[this.current_country] = 1
-            }
-          }
-          this.retry = false
-
-        }else{
-          title = "Raté ! "
-          text = "La capitale de "+this.current_country+" est "+this.good_answer
-          icon = "error"
-          this.retry = true
-          if(Object.keys(this.streak).includes(this.current_country)){
-            if (this.streak[this.current_country] > 0){ 
-              this.streak[this.current_country] --
-            }
-          }else{
-            this.streak[this.current_country] = 0
-          }
-        }
-
-        Swal.fire({
-          title: title,
-          text: text,
-          icon: icon,
-          confirmButtonText: 'Ok',
-
-        }).then((r) => {
-          if (this.retry){
-            return
-          }
-
-          ask()
-        })
-      }
-    }
-    }).mount("#app")
-
-		
+      		
     const queryString = window.location.search;
 		const urlParams = new URLSearchParams(queryString);
 
@@ -247,9 +186,92 @@ input{
 
     i18n.translator.add(fr_translations_json)
 
+
+
+    app = Vue.createApp({
+      data(){ return {
+        current_country: "Loading...",
+        last_country: "",
+        choices: ["1","2"],
+        good_answer: "",
+        isTextInput: false,
+        streak: {},
+        retry: false
+      }},
+      methods: {
+      answer(capital) {
+        this.message = ""
+
+        if (capital == this.good_answer){
+          
+          title = "Parfait"
+          text = "La capitale de "+this.current_country+" est bien "+capital
+          icon = "success"
+          if (!this.retry){
+            if(Object.keys(this.streak).includes(this.current_country)){
+              this.streak[this.current_country] ++
+            }else{
+              this.streak[this.current_country] = 1
+            }
+          }
+          this.retry = false
+          if (this.streak[this.current_country] >= HOW_MANY_TO_OK){
+            console.log("KNOWED COUNTRY")
+            code = Object.keys(CAPITALS)[Object.values(CAPITALS).indexOf(this.good_answer)];
+            country_list = removeFromArray(country_list, code)
+            if (countries.length == 0){
+                Swal.fire({
+                    title: "Bravo",
+                    text: "Vous avez fini cet entrainement",
+                    icon: icon,
+                    confirmButtonText: 'Recommencer',
+          
+                  }).then((r) => {
+                    document.location.reload()
+                  })
+            }
+            new_code = chance.pickone(countries)
+            country_list.push(new_code)
+            countries = removeFromArray(countries, new_code)
+        }
+
+
+
+        }else{
+          title = "Raté ! "
+          text = "La capitale de "+this.current_country+" est "+this.good_answer
+          icon = "error"
+          this.retry = true
+          if(Object.keys(this.streak).includes(this.current_country)){
+            if (this.streak[this.current_country] > 0){ 
+              this.streak[this.current_country] --
+            }
+          }else{
+            this.streak[this.current_country] = 0
+          }
+        }
+
+        Swal.fire({
+          title: title,
+          text: text,
+          icon: icon,
+          confirmButtonText: 'Ok',
+
+        }).then((r) => {
+          if (this.retry){
+            return
+          }
+
+          ask()
+        })
+      }
+    }
+    }).mount("#app")
+
+
+
     play()
 
-    		
 
 
 
