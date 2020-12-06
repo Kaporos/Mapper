@@ -216,8 +216,9 @@ input{
           }
           this.retry = false
           if (this.streak[this.current_country] >= HOW_MANY_TO_OK){
-            console.log("KNOWED COUNTRY")
-            code = Object.keys(CAPITALS)[Object.values(CAPITALS).indexOf(this.good_answer)];
+            console.log("KNOWED COUNTRY : "+this.current_country)
+            code = this.last_country;
+            console.log("Removed code : "+code)
             country_list = removeFromArray(country_list, code)
             if (countries.length == 0){
                 Swal.fire({
@@ -231,8 +232,8 @@ input{
                   })
             }
             new_code = chance.pickone(countries)
-            country_list.push(new_code)
             countries = removeFromArray(countries, new_code)
+            country_list.push(new_code)
         }
 
 

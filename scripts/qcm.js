@@ -1,6 +1,9 @@
 function play() {
 
     country_list = chance.pickset(countries, CURRENT_NUMBER)
+    country_list.forEach(country => {
+        countries = removeFromArray(countries, country)
+    });
     ask()
 
 
